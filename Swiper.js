@@ -524,6 +524,7 @@ class Swiper extends Component {
           swipedAllCards = true
         }
       } else {
+          await this.setCardIndex(0, swipedAllCards)
         newCardIndex = 0;
       }
     }
