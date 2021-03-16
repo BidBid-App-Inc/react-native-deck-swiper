@@ -70,6 +70,15 @@ class Swiper extends Component {
         !isEqual(props.cards, nextProps.cards) ||
         props.cardIndex !== nextProps.cardIndex
     )
+
+    if(propsChanged || stateChanged && props.cards.length !== nextProps.cards.length) {
+      this.setState({
+        cards: nextProps.cards
+      })
+    }
+
+
+
     const stateChanged = (
         nextState.firstCardIndex !== state.firstCardIndex ||
         nextState.secondCardIndex !== state.secondCardIndex ||
@@ -693,22 +702,22 @@ class Swiper extends Component {
     const { pointerEvents, backgroundColor, marginTop, marginBottom, containerStyle, swipeBackCard } = this.props
     return (
         <View
-    pointerEvents={pointerEvents}
-    style={[
-          styles.container,
-    {
-      backgroundColor: backgroundColor,
-          marginTop: marginTop,
-        marginBottom: marginBottom
-    },
-    containerStyle
-  ]}
-  >
-    {this.renderChildren()}
-    {swipeBackCard ? this.renderSwipeBackCard() : null}
-    {this.renderStack()}
-  </View>
-  )
+            pointerEvents={pointerEvents}
+            style={[
+              styles.container,
+              {
+                backgroundColor: backgroundColor,
+                marginTop: marginTop,
+                marginBottom: marginBottom
+              },
+              containerStyle
+            ]}
+        >
+          {this.renderChildren()}
+          {swipeBackCard ? this.renderSwipeBackCard() : null}
+          {this.renderStack()}
+        </View>
+    )
   }
 
   renderChildren = () => {
@@ -724,9 +733,9 @@ class Swiper extends Component {
 
     return (
         <View pointerEvents='box-none' style={[styles.childrenViewStyle, { zIndex: zIndex }]}>
-    {children}
-  </View>
-  )
+          {children}
+        </View>
+    )
   }
 
   getCardKey = (cardContent, cardIndex) => {
@@ -746,15 +755,15 @@ class Swiper extends Component {
     const swipableCardStyle = this.calculateSwipableCardStyle()
     const renderOverlayLabel = this.renderOverlayLabel()
     renderedCards.push(
-    <Animated.View
-    key={key}
-    style={firstCard ? swipableCardStyle : stackCardZoomStyle}
-    {...this._panResponder.panHandlers}
-  >
-    {firstCard ? renderOverlayLabel : null}
-    {stackCard}
-  </Animated.View>
-  )
+        <Animated.View
+            key={key}
+            style={firstCard ? swipableCardStyle : stackCardZoomStyle}
+            {...this._panResponder.panHandlers}
+        >
+          {firstCard ? renderOverlayLabel : null}
+          {stackCard}
+        </Animated.View>
+    )
   }
 
   renderStack = () => {
@@ -791,9 +800,9 @@ class Swiper extends Component {
 
     return (
         <Animated.View key={key} style={previousCardStyle}>
-        {previousCard}
+          {previousCard}
         </Animated.View>
-  )
+    )
   }
 
   renderOverlayLabel = () => {
@@ -825,17 +834,17 @@ class Swiper extends Component {
 
     return (
         <Animated.View style={this.calculateOverlayLabelWrapperStyle()}>
-        {!overlayLabels[labelType].element &&
-    <Text style={this.calculateOverlayLabelStyle()}>
-        {overlayLabels[labelType].title}
-        </Text>
-  }
+          {!overlayLabels[labelType].element &&
+          <Text style={this.calculateOverlayLabelStyle()}>
+            {overlayLabels[labelType].title}
+          </Text>
+          }
 
-    {overlayLabels[labelType].element &&
-    overlayLabels[labelType].element
-    }
-  </Animated.View>
-  )
+          {overlayLabels[labelType].element &&
+          overlayLabels[labelType].element
+          }
+        </Animated.View>
+    )
   }
 }
 
