@@ -41,6 +41,7 @@ class Swiper extends Component {
     this.state = {
       ...calculateCardIndexes(props.cardIndex, props.cards),
       pan: new Animated.ValueXY(),
+      statusCard: 'auto',
       cards: props.cards,
       previousCardX: new Animated.Value(props.previousCardDefaultPositionX),
       previousCardY: new Animated.Value(props.previousCardDefaultPositionY),
@@ -249,6 +250,12 @@ class Swiper extends Component {
 
   onPanResponderRelease = (e, gestureState) => {
     this.props.dragEnd && this.props.dragEnd()
+    setTimeout(() => {
+      this.setState({
+        statusCard: 'auto'
+      }, () => this.forceUpdate())
+    }, 400)
+
     if (this.state.panResponderLocked) {
       this.state.pan.setValue({
         x: 0,
@@ -524,7 +531,7 @@ class Swiper extends Component {
           swipedAllCards = true
         }
       } else {
-          await this.setCardIndex(0, swipedAllCards)
+        await this.setCardIndex(0, swipedAllCards)
         newCardIndex = 0;
       }
     }
@@ -699,11 +706,17 @@ class Swiper extends Component {
         outputRange: this.props.outputRotationRange
       })
 
+  setStatusCard = (status) => {
+    this.setState({
+      statusCard: status
+    })
+  }
+
   render = () => {
     const { pointerEvents, backgroundColor, marginTop, marginBottom, containerStyle, swipeBackCard } = this.props
     return (
         <View
-            pointerEvents={pointerEvents}
+            pointerEvents={this.state.statusCard}
             style={[
               styles.container,
               {
