@@ -72,14 +72,6 @@ class Swiper extends Component {
         props.cardIndex !== nextProps.cardIndex
     )
 
-    if(propsChanged || stateChanged && props.cards.length !== nextProps.cards.length) {
-      this.setState({
-        cards: nextProps.cards
-      })
-    }
-
-
-
     const stateChanged = (
         nextState.firstCardIndex !== state.firstCardIndex ||
         nextState.secondCardIndex !== state.secondCardIndex ||
@@ -87,6 +79,15 @@ class Swiper extends Component {
         nextState.labelType !== state.labelType ||
         nextState.swipedAllCards !== state.swipedAllCards
     )
+
+    if(props.cards.length !== nextProps.cards.length) {
+      this.setState({
+        cards: nextProps.cards
+      }, () => {
+        this.forceUpdate()
+      })
+    }
+
     return propsChanged || stateChanged
   }
 
@@ -518,11 +519,11 @@ class Swiper extends Component {
     const { infinite } = this.props
     let newCardIndex = firstCardIndex + 1
     let swipedAllCards = false
+
     await this.setCardIndex(newCardIndex, swipedAllCards)
     this.onSwipedCallbacks(onSwiped)
 
     const allSwipedCheck = () => newCardIndex === this.state.cards.length
-
     if (allSwipedCheck()) {
       if (!infinite) {
         this.props.onSwipedAll()
