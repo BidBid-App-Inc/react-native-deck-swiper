@@ -182,8 +182,10 @@ class Swiper extends Component {
     }
 
     if (isSwipingRight) {
+      this.props.onSwipedAborted && this.props.onSwipedAborted()
       this.setState({ labelType: LABEL_TYPES.RIGHT })
     } else if (isSwipingLeft) {
+      this.props.dragStart && this.props.dragStart()
       this.setState({ labelType: LABEL_TYPES.LEFT })
     } else if (isSwipingTop) {
       this.setState({ labelType: LABEL_TYPES.TOP })
@@ -212,7 +214,6 @@ class Swiper extends Component {
   }
 
   onPanResponderGrant = (event, gestureState) => {
-    this.props.dragStart && this.props.dragStart()
     if (!this.state.panResponderLocked) {
       this.state.pan.setOffset({
         x: this._animatedValueX,
