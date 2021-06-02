@@ -71,7 +71,6 @@ class Swiper extends Component {
         !isEqual(props.cards, nextProps.cards) ||
         props.cardIndex !== nextProps.cardIndex
     )
-
     const stateChanged = (
         nextState.firstCardIndex !== state.firstCardIndex ||
         nextState.secondCardIndex !== state.secondCardIndex ||
@@ -80,15 +79,16 @@ class Swiper extends Component {
         nextState.swipedAllCards !== state.swipedAllCards
     )
 
-    if(props.cards.length !== nextProps.cards.length) {
+    return propsChanged || stateChanged
+  }
+
+  componentDidUpdate(prevPros) {
+    if (!isEqual(prevPros.cards, this.props.cards)) {
       this.setState({
-        cards: nextProps.cards
-      }, () => {
-        this.forceUpdate()
+        cards: this.props.cards,
+        ...calculateCardIndexes(this.props.cardIndex, this.props.cards),
       })
     }
-
-    return propsChanged || stateChanged
   }
 
   componentWillUnmount = () => {
