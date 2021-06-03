@@ -82,12 +82,28 @@ class Swiper extends Component {
     return propsChanged || stateChanged
   }
 
-  componentDidUpdate(prevPros) {
+  async componentDidUpdate(prevPros) {
     if (!isEqual(prevPros.cards, this.props.cards)) {
-      this.setState({
+      const {infinite} = this.props
+      let newCardIndex = this.props.cardIndex
+      let swipedAllCards = false
+      await this.setState({
         cards: this.props.cards,
-        ...calculateCardIndexes(this.props.cardIndex, this.props.cards),
       })
+      await this.setCardIndex(newCardIndex, swipedAllCards)
+
+      const allSwipedCheck = () => newCardIndex === this.state.cards.length
+      if (allSwipedCheck()) {
+        if (!infinite) {
+          this.props.onSwipedAll()
+          // onSwipeAll may have added cards
+          if (allSwipedCheck()) {
+            swipedAllCards = true
+          }
+        } else {
+          await this.setCardIndex(0, swipedAllCards)
+        }
+      }
     }
   }
 
@@ -108,8 +124,7 @@ class Swiper extends Component {
     } = this.props
 
     const cardWidth = width - cardHorizontalMargin * 2
-    const cardHeight =
-        height - cardVerticalMargin * 2 - marginTop - marginBottom
+    const cardHeight = height - cardVerticalMargin * 2 - marginTop - marginBottom
 
     return {
       top: cardVerticalMargin,
