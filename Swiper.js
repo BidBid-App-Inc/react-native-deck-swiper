@@ -83,7 +83,7 @@ class Swiper extends Component {
   }
 
   async componentDidUpdate(prevPros) {
-    if (!isEqual(prevPros.cards, this.props.cards)) {
+    if (prevPros.cards.length !== this.props.cards.length) {
       const {infinite} = this.props
       let newCardIndex = this.props.cardIndex
       let swipedAllCards = false
