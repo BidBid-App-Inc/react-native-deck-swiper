@@ -209,8 +209,8 @@ class Swiper extends Component {
   onPanResponderGrant = (event, gestureState) => {
     if (!this.state.panResponderLocked) {
       this.state.pan.setOffset({
-        x: this._animatedValueX,
-        y: this._animatedValueY
+        x: 0,
+        y: 0
       })
     }
 
@@ -268,6 +268,11 @@ class Swiper extends Component {
     } else {
       this.resetTopCard()
     }
+
+    this.setState({
+      labelType: LABEL_TYPES.NONE,
+      slideGesture: false
+    })
   }
 
   getOnSwipeDirectionCallback = (animatedValueX, animatedValueY) => {
@@ -947,7 +952,3 @@ Swiper.defaultProps = {
 }
 
 export default Swiper
-
-
-
-
