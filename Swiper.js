@@ -2,9 +2,7 @@ import React, { Component } from 'react'
 import { PanResponder, Text, View, Dimensions, Animated } from 'react-native'
 import PropTypes from 'prop-types'
 import isEqual from 'lodash/isEqual'
-
 import styles from './styles'
-import {Log} from "../../src/shared/processing";
 
 const { height, width } = Dimensions.get('window')
 const LABEL_TYPES = {
@@ -266,7 +264,7 @@ class Swiper extends Component {
       )
       this.swipeCard(onSwipeDirectionCallback)
     } else {
-      this.resetTopCard()
+      this.resetTopCard()import {Log} from "../../src/shared/processing";
     }
 
     this.setState({
@@ -381,7 +379,8 @@ class Swiper extends Component {
       mustDecrementCardIndex = false
   ) => {
     this.setState({ panResponderLocked: true })
-    // this.animateStack()
+    // TODO
+    this.animateStack()
     Animated.timing(this.state.pan, {
       toValue: {
         x: x * SWIPE_MULTIPLY_FACTOR,
@@ -691,7 +690,7 @@ class Swiper extends Component {
     const stackCard = this.props.renderCard(cards[index], index)
     const swipableCardStyle = this.calculateSwipableCardStyle()
     const renderOverlayLabel = this.renderOverlayLabel()
-    // Log('swipableCardStyle', swipableCardStyle)
+
     renderedCards.push(
         <Animated.View
             key={key}
@@ -754,13 +753,9 @@ class Swiper extends Component {
 
     const { labelType } = this.state
 
-
-    // const labelTypeNone = labelType === LABEL_TYPES.NONE
     const directionSwipeLabelDisabled =
         (labelType === LABEL_TYPES.LEFT && disableLeftSwipe) ||
         (labelType === LABEL_TYPES.RIGHT && disableRightSwipe)
-
-    // Log('directionSwipeLabelDisabled', directionSwipeLabelDisabled)
 
     if (
         !overlayLabels ||
