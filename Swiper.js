@@ -188,7 +188,6 @@ class Swiper extends Component {
         isSwipeLeftRef = false
       }
     } else if (isSwipingLeft) {
-      // Log('BB', isSwipeLeftRef)
       if(!isSwipeLeftRef) {
         this.props.dragStart && this.props.dragStart()
         this.setState({ labelType: LABEL_TYPES.LEFT })
@@ -264,7 +263,7 @@ class Swiper extends Component {
       )
       this.swipeCard(onSwipeDirectionCallback)
     } else {
-      this.resetTopCard()import {Log} from "../../src/shared/processing";
+      this.resetTopCard()
     }
 
     this.setState({
