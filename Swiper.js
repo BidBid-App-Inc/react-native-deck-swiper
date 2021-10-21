@@ -241,6 +241,8 @@ class Swiper extends Component {
   }
 
   onPanResponderRelease = (e, gestureState) => {
+    this.props.dragEnd && this.props.dragEnd()
+
     if(isSwipeRightRef || isSwipeLeftRef) {
       isSwipeRightRef = false
       isSwipeLeftRef = false
