@@ -350,9 +350,10 @@ class Swiper extends Component {
     if (!canSwipeBack) {
       return
     }
-    this.setState({isSwipingBack: !isSwipingBack, swipeBackXYPositions}, () => {
-      this.animatePreviousCard(this.calculateNextPreviousCardPosition(), cb)
-    })
+    this.decrementCardIndex(cb);
+    // this.setState({isSwipingBack: !isSwipingBack, swipeBackXYPositions}, () => {
+    //   this.animatePreviousCard(this.calculateNextPreviousCardPosition(), cb)
+    // })
   }
 
   swipeLeft = (mustDecrementCardIndex = false) => {
@@ -412,6 +413,7 @@ class Swiper extends Component {
   }
 
   animatePreviousCard = ({x, y}, cb) => {
+
     const { previousCardX, previousCardY } = this.state
     previousCardX.setValue(x * SWIPE_MULTIPLY_FACTOR)
     previousCardY.setValue(y * SWIPE_MULTIPLY_FACTOR)
