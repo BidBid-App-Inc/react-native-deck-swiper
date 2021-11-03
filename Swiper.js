@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { PanResponder, Text, View, Dimensions, Animated } from 'react-native'
+import { PanResponder, View, Dimensions, Animated } from 'react-native'
 import PropTypes from 'prop-types'
 import isEqual from 'lodash/isEqual'
 import styles from './styles'
@@ -350,10 +350,9 @@ class Swiper extends Component {
     if (!canSwipeBack) {
       return
     }
-    this.decrementCardIndex(cb);
-    // this.setState({isSwipingBack: !isSwipingBack, swipeBackXYPositions}, () => {
-    //   this.animatePreviousCard(this.calculateNextPreviousCardPosition(), cb)
-    // })
+    this.setState({isSwipingBack: !isSwipingBack, swipeBackXYPositions}, () => {
+      this.animatePreviousCard(this.calculateNextPreviousCardPosition(), cb)
+    })
   }
 
   swipeLeft = (mustDecrementCardIndex = false) => {
@@ -413,7 +412,6 @@ class Swiper extends Component {
   }
 
   animatePreviousCard = ({x, y}, cb) => {
-
     const { previousCardX, previousCardY } = this.state
     previousCardX.setValue(x * SWIPE_MULTIPLY_FACTOR)
     previousCardY.setValue(y * SWIPE_MULTIPLY_FACTOR)
@@ -648,14 +646,6 @@ class Swiper extends Component {
         outputRange: this.props.outputRotationRange
       })
 
-  // setStatusCard = (status) => {
-  //   if(status !== this.state.statusCard) {
-  //     this.setState({
-  //       statusCard: status
-  //     })
-  //   }
-  // }
-
   render = () => {
     const { pointerEvents, backgroundColor, marginTop, marginBottom, containerStyle, swipeBackCard } = this.props
     return (
@@ -707,7 +697,7 @@ class Swiper extends Component {
   }
 
   renderStack = () => {
-    const { cards, firstCardIndex, swipedAllCards } = this.state
+    const { cards, firstCardIndex, swipedAllCards, previousCardIndex } = this.state
     const renderedCards = []
     let { stackSize, infinite, showSecondCard } = this.props
     let index = firstCardIndex
@@ -715,6 +705,9 @@ class Swiper extends Component {
     let cardPosition = 0
 
     while (stackSize-- > 0 && (firstCard || showSecondCard) && !swipedAllCards) {
+      if(cardPosition === 2) {
+        index = previousCardIndex
+      }
       const key = this.getCardKey(cards[index], index)
       this.pushCardToStack(renderedCards, index, cardPosition, key, firstCard)
 
@@ -728,6 +721,7 @@ class Swiper extends Component {
       }
       cardPosition++
     }
+
     return renderedCards
   }
 
