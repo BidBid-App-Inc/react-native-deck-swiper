@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { PanResponder, View, Dimensions, Animated } from 'react-native'
+import { PanResponder, Text, View, Dimensions, Animated } from 'react-native'
 import PropTypes from 'prop-types'
 import isEqual from 'lodash/isEqual'
 import styles from './styles'
+import _ from 'lodash'
 
 const { height, width } = Dimensions.get('window')
 const LABEL_TYPES = {
@@ -183,7 +184,6 @@ class Swiper extends Component {
       if(!isSwipeRightRef) {
         this.props.onSwipedAborted && this.props.onSwipedAborted()
         this.setState({ labelType: LABEL_TYPES.RIGHT })
-        this.forceUpdate()
         isSwipeRightRef = true
         isSwipeLeftRef = false
       }
@@ -191,7 +191,6 @@ class Swiper extends Component {
       if(!isSwipeLeftRef) {
         this.props.dragStart && this.props.dragStart()
         this.setState({ labelType: LABEL_TYPES.LEFT })
-        this.forceUpdate()
         isSwipeLeftRef = true
         isSwipeRightRef = false
       }
@@ -228,15 +227,11 @@ class Swiper extends Component {
     const {
       isSwipingLeft,
       isSwipingRight,
-      isSwipingTop,
-      isSwipingBottom
     } = this.getSwipeDirection(this._animatedValueX, this._animatedValueY)
 
     return (
         (isSwipingLeft && !disableLeftSwipe) ||
-        (isSwipingRight && !disableRightSwipe) ||
-        (isSwipingTop && !disableTopSwipe) ||
-        (isSwipingBottom && !disableBottomSwipe)
+        (isSwipingRight && !disableRightSwipe)
     )
   }
 
@@ -284,9 +279,7 @@ class Swiper extends Component {
 
     const {
       isSwipingLeft,
-      isSwipingRight,
-      isSwipingTop,
-      isSwipingBottom
+      isSwipingRight
     } = this.getSwipeDirection(animatedValueX, animatedValueY)
 
     if (isSwipingRight) {
@@ -296,39 +289,25 @@ class Swiper extends Component {
     if (isSwipingLeft) {
       return onSwipedLeft
     }
-
-    if (isSwipingTop) {
-      return onSwipedTop
-    }
-
-    if (isSwipingBottom) {
-      return onSwipedBottom
-    }
   }
 
   mustDecrementCardIndex = (animatedValueX, animatedValueY) => {
     const {
       isSwipingLeft,
-      isSwipingRight,
-      isSwipingTop,
-      isSwipingBottom
+      isSwipingRight
     } = this.getSwipeDirection(animatedValueX, animatedValueY)
 
     return (
         (isSwipingLeft && this.props.goBackToPreviousCardOnSwipeLeft) ||
-        (isSwipingRight && this.props.goBackToPreviousCardOnSwipeRight) ||
-        (isSwipingTop && this.props.goBackToPreviousCardOnSwipeTop) ||
-        (isSwipingBottom && this.props.goBackToPreviousCardOnSwipeBottom)
+        (isSwipingRight && this.props.goBackToPreviousCardOnSwipeRight)
     )
   }
 
   getSwipeDirection = (animatedValueX, animatedValueY) => {
     const isSwipingLeft = animatedValueX < -this.props.horizontalThreshold
     const isSwipingRight = animatedValueX > this.props.horizontalThreshold
-    const isSwipingTop = animatedValueY < -this.props.verticalThreshold
-    const isSwipingBottom = animatedValueY > this.props.verticalThreshold
 
-    return { isSwipingLeft, isSwipingRight, isSwipingTop, isSwipingBottom }
+    return { isSwipingLeft, isSwipingRight }
   }
 
   resetTopCard = cb => {
@@ -340,18 +319,6 @@ class Swiper extends Component {
     this.state.pan.setOffset({
       x: 0,
       y: 0
-    })
-  }
-
-  swipeBack = cb => {
-    const { swipeBackXYPositions, isSwipingBack } = this.state
-    const { infinite } = this.props
-    const canSwipeBack = !isSwipingBack && (swipeBackXYPositions.length > 0 || infinite)
-    if (!canSwipeBack) {
-      return
-    }
-    this.setState({isSwipingBack: !isSwipingBack, swipeBackXYPositions}, () => {
-      this.animatePreviousCard(this.calculateNextPreviousCardPosition(), cb)
     })
   }
 
@@ -409,29 +376,6 @@ class Swiper extends Component {
 
   setSwipeBackCardXY = (x = -width, y = 0, cb) => {
     this.setState({swipeBackXYPositions: [...this.state.swipeBackXYPositions, {x, y}]}, cb)
-  }
-
-  animatePreviousCard = ({x, y}, cb) => {
-    const { previousCardX, previousCardY } = this.state
-    previousCardX.setValue(x * SWIPE_MULTIPLY_FACTOR)
-    previousCardY.setValue(y * SWIPE_MULTIPLY_FACTOR)
-    Animated.parallel([
-      Animated.spring(this.state.previousCardX, {
-        toValue: 0,
-        friction: this.props.stackAnimationFriction,
-        tension: this.props.stackAnimationTension,
-        useNativeDriver: true
-      }),
-      Animated.spring(this.state.previousCardY, {
-        toValue: 0,
-        friction: this.props.stackAnimationFriction,
-        tension: this.props.stackAnimationTension,
-        useNativeDriver: true
-      })
-    ]).start(() => {
-      this.setState({isSwipingBack: false})
-      this.decrementCardIndex(cb)
-    })
   }
 
   animateStack = () => {
@@ -677,8 +621,43 @@ class Swiper extends Component {
     return cardIndex
   }
 
+  animatePreviousCard = ({x, y}, cb) => {
+    const { previousCardX, previousCardY } = this.state
+    previousCardX.setValue(x * SWIPE_MULTIPLY_FACTOR)
+    previousCardY.setValue(y * SWIPE_MULTIPLY_FACTOR)
+    Animated.parallel([
+      Animated.spring(this.state.previousCardX, {
+        toValue: 0,
+        friction: this.props.stackAnimationFriction,
+        tension: this.props.stackAnimationTension,
+        useNativeDriver: true
+      }),
+      Animated.spring(this.state.previousCardY, {
+        toValue: 0,
+        friction: this.props.stackAnimationFriction,
+        tension: this.props.stackAnimationTension,
+        useNativeDriver: true
+      })
+    ]).start(() => {
+      this.setState({isSwipingBack: false})
+      this.decrementCardIndex(cb)
+    })
+  }
+
+  swipeBack = cb => {
+    const { swipeBackXYPositions, isSwipingBack } = this.state
+    const { infinite } = this.props
+    const canSwipeBack = !isSwipingBack && (swipeBackXYPositions.length > 0 || infinite)
+    if (!canSwipeBack) {
+      return
+    }
+    this.setState({isSwipingBack: !isSwipingBack, swipeBackXYPositions}, () => {
+      this.animatePreviousCard(this.calculateNextPreviousCardPosition(), cb)
+    })
+  }
+
   pushCardToStack = (renderedCards, index, position, key, firstCard) => {
-    const { cards } = this.props
+    const { cards, infinite } = this.props;
     const stackCardZoomStyle = this.calculateStackCardZoomStyle(position)
     const stackCard = this.props.renderCard(cards[index], index)
     const swipableCardStyle = this.calculateSwipableCardStyle()
@@ -700,12 +679,13 @@ class Swiper extends Component {
     const { cards, firstCardIndex, swipedAllCards, previousCardIndex } = this.state
     const renderedCards = []
     let { stackSize, infinite, showSecondCard } = this.props
+    const cloneStackSize = _.clone(stackSize);
     let index = firstCardIndex
     let firstCard = true
     let cardPosition = 0
 
     while (stackSize-- > 0 && (firstCard || showSecondCard) && !swipedAllCards) {
-      if(cardPosition === 2) {
+      if(cardPosition === cloneStackSize-1) {
         index = previousCardIndex
       }
       const key = this.getCardKey(cards[index], index)
