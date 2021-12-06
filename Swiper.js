@@ -414,9 +414,6 @@ class Swiper extends Component {
     let newCardIndex = firstCardIndex + 1
     let swipedAllCards = false
 
-    await this.setCardIndex(newCardIndex, swipedAllCards)
-    this.onSwipedCallbacks(onSwiped)
-
     const allSwipedCheck = () => newCardIndex === this.state.cards.length
     if (allSwipedCheck()) {
       if (!infinite) {
@@ -427,9 +424,13 @@ class Swiper extends Component {
         }
       } else {
         await this.setCardIndex(0, swipedAllCards)
+        this.onSwipedCallbacks(onSwiped)
         newCardIndex = 0;
       }
+      return
     }
+    await this.setCardIndex(newCardIndex, swipedAllCards)
+    this.onSwipedCallbacks(onSwiped)
   }
 
   decrementCardIndex = async (cb) => {
@@ -702,6 +703,7 @@ class Swiper extends Component {
       cardPosition++
     }
 
+    console.log('**** 4444', renderedCards)
     return renderedCards
   }
 
