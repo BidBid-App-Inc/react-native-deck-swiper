@@ -203,6 +203,8 @@ class Swiper extends Component {
   }
 
   onPanResponderGrant = (event, gestureState) => {
+    isSwipeRightRef = false
+    isSwipeLeftRef = false
     if (!this.state.panResponderLocked) {
       this.state.pan.setOffset({
         x: 0,
@@ -237,11 +239,8 @@ class Swiper extends Component {
 
   onPanResponderRelease = (e, gestureState) => {
     this.props.dragEnd && this.props.dragEnd()
-
-    if(isSwipeRightRef || isSwipeLeftRef) {
-      isSwipeRightRef = false
-      isSwipeLeftRef = false
-    }
+    isSwipeRightRef = false
+    isSwipeLeftRef = false
 
     this.props.onSwipedAborted && this.props.onSwipedAborted()
 
@@ -731,15 +730,9 @@ class Swiper extends Component {
 
     const { labelType } = this.state
 
-    const directionSwipeLabelDisabled =
-        (labelType === LABEL_TYPES.LEFT && disableLeftSwipe) ||
-        (labelType === LABEL_TYPES.RIGHT && disableRightSwipe)
-
     if (
         !overlayLabels ||
-        !overlayLabels[labelType] ||
-
-        directionSwipeLabelDisabled
+        !overlayLabels[labelType]
     ) {
       return null
     }
