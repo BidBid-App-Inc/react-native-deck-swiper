@@ -703,7 +703,6 @@ class Swiper extends Component {
       cardPosition++
     }
 
-    console.log('**** 4444', renderedCards)
     return renderedCards
   }
 
