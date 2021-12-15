@@ -492,13 +492,10 @@ class Swiper extends Component {
   calculateOverlayLabelWrapperStyle = () => {
     const dynamicStyle = this.props.overlayLabels[this.state.labelType].style
     const dynamicWrapperStyle = dynamicStyle ? dynamicStyle.wrapper : {}
-
-    const opacity = 1;
-    return [this.props.overlayLabelWrapperStyle, dynamicWrapperStyle, { opacity }]
+    return [this.props.overlayLabelWrapperStyle, dynamicWrapperStyle, { opacity: 1 }]
   }
 
   calculateSwipableCardStyle = () => {
-    const opacity = 1
     const rotation = this.interpolateRotation()
 
     return [
@@ -506,7 +503,7 @@ class Swiper extends Component {
       this.getCardStyle(),
       {
         zIndex: 1,
-        opacity: opacity,
+        opacity: 1,
         transform: [
           { translateX: this.state.pan.x },
           { translateY: this.state.pan.y },
@@ -717,10 +714,6 @@ class Swiper extends Component {
 
   renderOverlayLabel = () => {
     const {
-      disableBottomSwipe,
-      disableLeftSwipe,
-      disableRightSwipe,
-      disableTopSwipe,
       overlayLabels
     } = this.props
 
