@@ -69,6 +69,10 @@ class Swiper extends Component {
 
   shouldComponentUpdate = (nextProps, nextState) => {
     const { props, state } = this
+
+    if(!props.cards || !nextProps.cards)
+      return false
+
     const propsChanged = (
         !isEqual(props.cards, nextProps.cards) ||
         props.cardIndex !== nextProps.cardIndex
@@ -85,7 +89,8 @@ class Swiper extends Component {
   }
 
   async componentDidUpdate(prevPros) {
-    if (prevPros.cards.length !== this.props.cards.length) {
+    if (prevPros.cards && this.props.cards && prevPros.cards.length !== this.props.cards.length) {
+
       const {infinite} = this.props
       let newCardIndex = this.props.cardIndex
       let swipedAllCards = false
@@ -818,6 +823,7 @@ Swiper.defaultProps = {
   backgroundColor: '#4FD0E9',
   cardHorizontalMargin: 20,
   cardIndex: 0,
+  cards: [],
   cardStyle: {},
   cardVerticalMargin: 60,
   childrenOnTop: false,
